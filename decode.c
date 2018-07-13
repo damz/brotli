@@ -21,7 +21,7 @@
 #include "../common/version.h"
 #include "./bit_reader.h"
 #include "./huffman.h"
-#include "./prefix.h"
+#include "./dec-prefix.h"
 #include "./state.h"
 
 #if defined(__cplusplus) || defined(c_plusplus)
