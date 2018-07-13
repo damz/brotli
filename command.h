@@ -14,7 +14,7 @@
 #include <brotli/types.h>
 #include "./fast_log.h"
 #include "./params.h"
-#include "./prefix.h"
+#include "./enc-prefix.h"
 
 #if defined(__cplusplus) || defined(c_plusplus)
 extern "C" {

@@ -28,7 +28,7 @@
 #include "./histogram.h"
 #include "./memory.h"
 #include "./metablock.h"
-#include "./prefix.h"
+#include "./enc-prefix.h"
 #include "./quality.h"
 #include "./ringbuffer.h"
 #include "./utf8_util.h"
