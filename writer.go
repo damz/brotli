@@ -3,7 +3,7 @@
 // Distributed under MIT license.
 // See file LICENSE for detail or copy at https://opensource.org/licenses/MIT
 
-package cbrotli
+package brotli
 
 /*
 #include <stdbool.h>

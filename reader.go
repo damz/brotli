@@ -4,7 +4,7 @@
 // See file LICENSE for detail or copy at https://opensource.org/licenses/MIT
 
 // Package cbrotli compresses and decompresses data with C-Brotli library.
-package cbrotli
+package brotli
 
 /*
 #include <stddef.h>
