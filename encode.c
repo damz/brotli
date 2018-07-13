@@ -11,10 +11,10 @@
 #include <stdlib.h>  /* free, malloc */
 #include <string.h>  /* memcpy, memset */
 
-#include "../common/constants.h"
-#include "../common/context.h"
-#include "../common/platform.h"
-#include "../common/version.h"
+#include "./constants.h"
+#include "./context.h"
+#include "./platform.h"
+#include "./version.h"
 #include "./backward_references.h"
 #include "./backward_references_hq.h"
 #include "./bit_cost.h"

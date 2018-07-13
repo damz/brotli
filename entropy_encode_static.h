@@ -9,8 +9,8 @@
 #ifndef BROTLI_ENC_ENTROPY_ENCODE_STATIC_H_
 #define BROTLI_ENC_ENTROPY_ENCODE_STATIC_H_
 
-#include "../common/constants.h"
-#include "../common/platform.h"
+#include "./constants.h"
+#include "./platform.h"
 #include "./types.h"
 #include "./write_bits.h"
 

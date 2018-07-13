@@ -14,8 +14,8 @@
 
 #include <string.h>  /* memcmp, memcpy, memset */
 
-#include "../common/constants.h"
-#include "../common/platform.h"
+#include "./constants.h"
+#include "./platform.h"
 #include "./types.h"
 #include "./bit_cost.h"
 #include "./brotli_bit_stream.h"

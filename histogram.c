@@ -8,7 +8,7 @@
 
 #include "./histogram.h"
 
-#include "../common/context.h"
+#include "./context.h"
 #include "./block_splitter.h"
 #include "./command.h"
 

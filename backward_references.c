@@ -8,9 +8,9 @@
 
 #include "./backward_references.h"
 
-#include "../common/constants.h"
-#include "../common/dictionary.h"
-#include "../common/platform.h"
+#include "./constants.h"
+#include "./dictionary.h"
+#include "./platform.h"
 #include "./types.h"
 #include "./command.h"
 #include "./dictionary_hash.h"

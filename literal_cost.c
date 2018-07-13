@@ -9,7 +9,7 @@
 
 #include "./literal_cost.h"
 
-#include "../common/platform.h"
+#include "./platform.h"
 #include "./types.h"
 #include "./fast_log.h"
 #include "./utf8_util.h"

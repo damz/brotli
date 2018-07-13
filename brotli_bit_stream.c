@@ -12,9 +12,9 @@
 
 #include <string.h>  /* memcpy, memset */
 
-#include "../common/constants.h"
-#include "../common/context.h"
-#include "../common/platform.h"
+#include "./constants.h"
+#include "./context.h"
+#include "./platform.h"
 #include "./types.h"
 #include "./entropy_encode.h"
 #include "./entropy_encode_static.h"

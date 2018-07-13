@@ -11,7 +11,7 @@
 
 #include <string.h>  /* memcpy */
 
-#include "../common/platform.h"
+#include "./platform.h"
 #include "./types.h"
 #include "./memory.h"
 #include "./quality.h"

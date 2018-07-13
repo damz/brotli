@@ -9,9 +9,9 @@
 #ifndef BROTLI_ENC_BACKWARD_REFERENCES_HQ_H_
 #define BROTLI_ENC_BACKWARD_REFERENCES_HQ_H_
 
-#include "../common/constants.h"
-#include "../common/dictionary.h"
-#include "../common/platform.h"
+#include "./constants.h"
+#include "./dictionary.h"
+#include "./platform.h"
 #include "./types.h"
 #include "./command.h"
 #include "./hash.h"

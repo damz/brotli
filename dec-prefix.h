@@ -10,7 +10,7 @@
 #ifndef BROTLI_DEC_PREFIX_H_
 #define BROTLI_DEC_PREFIX_H_
 
-#include "../common/constants.h"
+#include "./constants.h"
 #include "./types.h"
 
 /* Represents the range of values belonging to a prefix code:

@@ -6,8 +6,8 @@
 
 #include "./encoder_dict.h"
 
-#include "../common/dictionary.h"
-#include "../common/transform.h"
+#include "./dictionary.h"
+#include "./transform.h"
 #include "./dictionary_hash.h"
 #include "./hash.h"
 

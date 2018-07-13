@@ -8,8 +8,8 @@
 
 #include "./bit_cost.h"
 
-#include "../common/constants.h"
-#include "../common/platform.h"
+#include "./constants.h"
+#include "./platform.h"
 #include "./types.h"
 #include "./fast_log.h"
 #include "./histogram.h"

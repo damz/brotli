@@ -7,8 +7,8 @@
 #ifndef BROTLI_ENC_ENCODER_DICT_H_
 #define BROTLI_ENC_ENCODER_DICT_H_
 
-#include "../common/dictionary.h"
-#include "../common/platform.h"
+#include "./dictionary.h"
+#include "./platform.h"
 #include "./types.h"
 #include "./static_dict_lut.h"
 

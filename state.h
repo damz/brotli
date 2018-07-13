@@ -9,10 +9,10 @@
 #ifndef BROTLI_DEC_STATE_H_
 #define BROTLI_DEC_STATE_H_
 
-#include "../common/constants.h"
-#include "../common/dictionary.h"
-#include "../common/platform.h"
-#include "../common/transform.h"
+#include "./constants.h"
+#include "./dictionary.h"
+#include "./platform.h"
+#include "./transform.h"
 #include "./types.h"
 #include "./bit_reader.h"
 #include "./huffman.h"

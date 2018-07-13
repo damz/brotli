@@ -12,9 +12,9 @@
 
 #include <string.h>  /* memcmp, memset */
 
-#include "../common/constants.h"
-#include "../common/dictionary.h"
-#include "../common/platform.h"
+#include "./constants.h"
+#include "./dictionary.h"
+#include "./platform.h"
 #include "./types.h"
 #include "./encoder_dict.h"
 #include "./fast_log.h"

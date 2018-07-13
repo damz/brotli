@@ -10,8 +10,8 @@
 #ifndef BROTLI_ENC_PREFIX_H_
 #define BROTLI_ENC_PREFIX_H_
 
-#include "../common/constants.h"
-#include "../common/platform.h"
+#include "./constants.h"
+#include "./platform.h"
 #include "./types.h"
 #include "./fast_log.h"
 

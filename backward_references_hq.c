@@ -10,8 +10,8 @@
 
 #include <string.h>  /* memcpy, memset */
 
-#include "../common/constants.h"
-#include "../common/platform.h"
+#include "./constants.h"
+#include "./platform.h"
 #include "./types.h"
 #include "./command.h"
 #include "./fast_log.h"

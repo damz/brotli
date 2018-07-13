@@ -10,8 +10,8 @@
 #ifndef BROTLI_ENC_METABLOCK_H_
 #define BROTLI_ENC_METABLOCK_H_
 
-#include "../common/context.h"
-#include "../common/platform.h"
+#include "./context.h"
+#include "./platform.h"
 #include "./types.h"
 #include "./block_splitter.h"
 #include "./command.h"

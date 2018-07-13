@@ -13,12 +13,12 @@
 #include <stdlib.h>  /* free, malloc */
 #include <string.h>  /* memcpy, memset */
 
-#include "../common/constants.h"
-#include "../common/context.h"
-#include "../common/dictionary.h"
-#include "../common/platform.h"
-#include "../common/transform.h"
-#include "../common/version.h"
+#include "./constants.h"
+#include "./context.h"
+#include "./dictionary.h"
+#include "./platform.h"
+#include "./transform.h"
+#include "./version.h"
 #include "./bit_reader.h"
 #include "./huffman.h"
 #include "./dec-prefix.h"
