@@ -3,7 +3,7 @@
 // Distributed under MIT license.
 // See file LICENSE for detail or copy at https://opensource.org/licenses/MIT
 
-// Package cbrotli compresses and decompresses data with C-Brotli library.
+// Package brotli compresses and decompresses data with the Brotli library.
 package brotli
 
 /*
@@ -38,13 +38,13 @@ import (
 type decodeError C.BrotliDecoderErrorCode
 
 func (err decodeError) Error() string {
-	return "cbrotli: " +
+	return "brotli: " +
 		C.GoString(C.BrotliDecoderErrorString(C.BrotliDecoderErrorCode(err)))
 }
 
-var errExcessiveInput = errors.New("cbrotli: excessive input")
-var errInvalidState = errors.New("cbrotli: invalid state")
-var errReaderClosed = errors.New("cbrotli: Reader is closed")
+var errExcessiveInput = errors.New("brotli: excessive input")
+var errInvalidState = errors.New("brotli: invalid state")
+var errReaderClosed = errors.New("brotli: Reader is closed")
 
 // Reader implements io.ReadCloser by reading Brotli-encoded data from an
 // underlying Reader.

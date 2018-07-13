@@ -67,8 +67,8 @@ type Writer struct {
 }
 
 var (
-	errEncode       = errors.New("cbrotli: encode error")
-	errWriterClosed = errors.New("cbrotli: Writer is closed")
+	errEncode       = errors.New("brotli: encode error")
+	errWriterClosed = errors.New("brotli: Writer is closed")
 )
 
 // NewWriter initializes new Writer instance.
