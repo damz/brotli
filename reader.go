@@ -147,8 +147,6 @@ func (r *Reader) Read(p []byte) (n int, err error) {
 		}
 		r.in = r.buf[:encN]
 	}
-
-	return n, nil
 }
 
 // Decode decodes Brotli encoded data.

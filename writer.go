@@ -61,9 +61,8 @@ type WriterOptions struct {
 // Writer implements io.WriteCloser by writing Brotli-encoded data to an
 // underlying Writer.
 type Writer struct {
-	dst          io.Writer
-	state        *C.BrotliEncoderState
-	buf, encoded []byte
+	dst   io.Writer
+	state *C.BrotliEncoderState
 }
 
 var (
