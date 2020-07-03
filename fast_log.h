@@ -19,10 +19,8 @@ extern "C" {
 #endif
 
 static BROTLI_INLINE uint32_t Log2FloorNonZero(size_t n) {
-  /* TODO: generalize and move to platform.h */
-#if BROTLI_GNUC_HAS_BUILTIN(__builtin_clz, 3, 4, 0) || \
-    BROTLI_INTEL_VERSION_CHECK(16, 0, 0)
-  return 31u ^ (uint32_t)__builtin_clz((uint32_t)n);
+#if defined(BROTLI_BSR32)
+  return BROTLI_BSR32((uint32_t)n);
 #else
   uint32_t result = 0;
   while (n >>= 1) result++;
@@ -34,7 +32,7 @@ static BROTLI_INLINE uint32_t Log2FloorNonZero(size_t n) {
    computation.
 
    ", ".join(["%.16ff" % x for x in [0.0]+[log2(x) for x in range(1, 256)]]) */
-static const float kLog2Table[] = {
+static const double kLog2Table[] = {
   0.0000000000000000f, 0.0000000000000000f, 1.0000000000000000f,
   1.5849625007211563f, 2.0000000000000000f, 2.3219280948873622f,
   2.5849625007211561f, 2.8073549220576042f, 3.0000000000000000f,
@@ -123,6 +121,17 @@ static const float kLog2Table[] = {
   7.9943534368588578f
 };
 
+/* Visual Studio 2012 and Android API levels < 18 do not have the log2()
+ * function defined, so we use log() and a multiplication instead. */
+#if !defined(BROTLI_HAVE_LOG2)
+#if ((defined(_MSC_VER) && _MSC_VER <= 1700) || \
+     (defined(__ANDROID_API__) && __ANDROID_API__ < 18))
+#define BROTLI_HAVE_LOG2 0
+#else
+#define BROTLI_HAVE_LOG2 1
+#endif
+#endif
+
 #define LOG_2_INV 1.4426950408889634
 
 /* Faster logarithm for small integers, with the property of log2(0) == 0. */
@@ -130,10 +139,7 @@ static BROTLI_INLINE double FastLog2(size_t v) {
   if (v < sizeof(kLog2Table) / sizeof(kLog2Table[0])) {
     return kLog2Table[v];
   }
-#if (defined(_MSC_VER) && _MSC_VER <= 1700) || \
-    (defined(__ANDROID_API__) && __ANDROID_API__ < 18)
-  /* Visual Studio 2012 and Android API levels < 18 do not have the log2()
-   * function defined, so we use log() and a multiplication instead. */
+#if !(BROTLI_HAVE_LOG2)
   return log((double)v) * LOG_2_INV;
 #else
   return log2((double)v);

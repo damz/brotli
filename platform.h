@@ -29,7 +29,7 @@
 #include "./port.h"
 #include "./types.h"
 
-#if defined(OS_LINUX) || defined(OS_CYGWIN)
+#if defined(OS_LINUX) || defined(OS_CYGWIN) || defined(__EMSCRIPTEN__)
 #include <endian.h>
 #elif defined(OS_FREEBSD)
 #include <machine/endian.h>
@@ -39,6 +39,10 @@
 #define BROTLI_X_BYTE_ORDER BYTE_ORDER
 #define BROTLI_X_LITTLE_ENDIAN LITTLE_ENDIAN
 #define BROTLI_X_BIG_ENDIAN BIG_ENDIAN
+#endif
+
+#if BROTLI_MSVC_VERSION_CHECK(12, 0, 0)
+#include <intrin.h>
 #endif
 
 #if defined(BROTLI_ENABLE_LOG) || defined(BROTLI_DEBUG)
@@ -71,7 +75,7 @@ OR:
 */
 #if BROTLI_GNUC_HAS_BUILTIN(__builtin_expect, 3, 0, 0) || \
     BROTLI_INTEL_VERSION_CHECK(16, 0, 0) ||               \
-    BROTLI_SUNPRO_VERSION_CHECK(5, 12, 0) ||              \
+    BROTLI_SUNPRO_VERSION_CHECK(5, 15, 0) ||              \
     BROTLI_ARM_VERSION_CHECK(4, 1, 0) ||                  \
     BROTLI_IBM_VERSION_CHECK(10, 1, 0) ||                 \
     BROTLI_TI_VERSION_CHECK(7, 3, 0) ||                   \
@@ -180,6 +184,12 @@ OR:
 #define BROTLI_UNUSED_FUNCTION static BROTLI_INLINE
 #endif
 
+#if BROTLI_GNUC_HAS_ATTRIBUTE(aligned, 2, 7, 0)
+#define BROTLI_ALIGNED(N) __attribute__((aligned(N)))
+#else
+#define BROTLI_ALIGNED(N)
+#endif
+
 #if (defined(__ARM_ARCH) && (__ARM_ARCH == 7)) || \
     (defined(M_ARM) && (M_ARM == 7))
 #define BROTLI_TARGET_ARMV7
@@ -196,6 +206,10 @@ OR:
 #endif
 
 #endif  /* ARMv8 */
+
+#if defined(__ARM_NEON__) || defined(__ARM_NEON)
+#define BROTLI_TARGET_NEON
+#endif
 
 #if defined(__i386) || defined(_M_IX86)
 #define BROTLI_TARGET_X86
@@ -298,6 +312,32 @@ static BROTLI_INLINE void BrotliUnalignedWrite64(void* p, uint64_t v) {
 }
 #else  /* BROTLI_ALIGNED_READ */
 /* Unaligned memory access is allowed: just cast pointer to requested type. */
+#if BROTLI_SANITIZED
+/* Consider we have an unaligned load/store of 4 bytes from address 0x...05.
+   AddressSanitizer will treat it as a 3-byte access to the range 05:07 and
+   will miss a bug if 08 is the first unaddressable byte.
+   ThreadSanitizer will also treat this as a 3-byte access to 05:07 and will
+   miss a race between this access and some other accesses to 08.
+   MemorySanitizer will correctly propagate the shadow on unaligned stores
+   and correctly report bugs on unaligned loads, but it may not properly
+   update and report the origin of the uninitialized memory.
+   For all three tools, replacing an unaligned access with a tool-specific
+   callback solves the problem. */
+#if defined(__cplusplus)
+extern "C" {
+#endif  /* __cplusplus */
+  uint16_t __sanitizer_unaligned_load16(const void* p);
+  uint32_t __sanitizer_unaligned_load32(const void* p);
+  uint64_t __sanitizer_unaligned_load64(const void* p);
+  void __sanitizer_unaligned_store64(void* p, uint64_t v);
+#if defined(__cplusplus)
+}  /* extern "C" */
+#endif  /* __cplusplus */
+#define BrotliUnalignedRead16 __sanitizer_unaligned_load16
+#define BrotliUnalignedRead32 __sanitizer_unaligned_load32
+#define BrotliUnalignedRead64 __sanitizer_unaligned_load64
+#define BrotliUnalignedWrite64 __sanitizer_unaligned_store64
+#else  /* BROTLI_SANITIZED */
 static BROTLI_INLINE uint16_t BrotliUnalignedRead16(const void* p) {
   return *(const uint16_t*)p;
 }
@@ -316,14 +356,14 @@ static BROTLI_INLINE void BrotliUnalignedWrite64(void* p, uint64_t v) {
 /* If __attribute__(aligned) is available, use that. Otherwise, memcpy. */
 
 #if BROTLI_GNUC_HAS_ATTRIBUTE(aligned, 2, 7, 0)
-typedef  __attribute__((aligned(1))) uint64_t unaligned_uint64_t;
+typedef BROTLI_ALIGNED(1) uint64_t brotli_unaligned_uint64_t;
 
 static BROTLI_INLINE uint64_t BrotliUnalignedRead64(const void* p) {
-  return (uint64_t) ((unaligned_uint64_t*) p)[0];
+  return (uint64_t) ((const brotli_unaligned_uint64_t*) p)[0];
 }
 static BROTLI_INLINE void BrotliUnalignedWrite64(void* p, uint64_t v) {
-  unaligned_uint64_t* dwords = (unaligned_uint64_t*) p;
-  dwords[0] = (unaligned_uint64_t) v;
+  brotli_unaligned_uint64_t* dwords = (brotli_unaligned_uint64_t*) p;
+  dwords[0] = (brotli_unaligned_uint64_t) v;
 }
 #else /* BROTLI_GNUC_HAS_ATTRIBUTE(aligned, 2, 7, 0) */
 static BROTLI_INLINE uint64_t BrotliUnalignedRead64(const void* p) {
@@ -337,6 +377,7 @@ static BROTLI_INLINE void BrotliUnalignedWrite64(void* p, uint64_t v) {
 }
 #endif  /* BROTLI_GNUC_HAS_ATTRIBUTE(aligned, 2, 7, 0) */
 #endif  /* BROTLI_64_BITS */
+#endif  /* BROTLI_SANITIZED */
 #endif  /* BROTLI_ALIGNED_READ */
 
 #if BROTLI_LITTLE_ENDIAN
@@ -428,20 +469,20 @@ static BROTLI_INLINE void BROTLI_UNALIGNED_STORE64LE(void* p, uint64_t v) {
 #endif
 
 #if defined(BROTLI_ENABLE_LOG)
-#define BROTLI_DCHECK(x) assert(x)
 #define BROTLI_LOG(x) printf x
 #else
-#define BROTLI_DCHECK(x)
 #define BROTLI_LOG(x)
 #endif
 
 #if defined(BROTLI_DEBUG) || defined(BROTLI_ENABLE_LOG)
+#define BROTLI_DCHECK(x) assert(x)
 static BROTLI_INLINE void BrotliDump(const char* f, int l, const char* fn) {
   fprintf(stderr, "%s:%d (%s)\n", f, l, fn);
   fflush(stderr);
 }
 #define BROTLI_DUMP() BrotliDump(__FILE__, __LINE__, __FUNCTION__)
 #else
+#define BROTLI_DCHECK(x)
 #define BROTLI_DUMP() (void)(0)
 #endif
 
@@ -484,6 +525,36 @@ BROTLI_MIN_MAX(size_t) BROTLI_MIN_MAX(uint32_t) BROTLI_MIN_MAX(uint8_t)
   (A)[(I)] = (A)[(J)];            \
   (A)[(J)] = __brotli_swap_tmp;   \
 }
+
+#if BROTLI_64_BITS
+#if BROTLI_GNUC_HAS_BUILTIN(__builtin_ctzll, 3, 4, 0) || \
+    BROTLI_INTEL_VERSION_CHECK(16, 0, 0)
+#define BROTLI_TZCNT64 __builtin_ctzll
+#elif BROTLI_MSVC_VERSION_CHECK(12, 0, 0)
+#if defined(BROTLI_TARGET_X64)
+#define BROTLI_TZCNT64 _tzcnt_u64
+#else /* BROTLI_TARGET_X64 */
+static BROTLI_INLINE uint32_t BrotliBsf64Msvc(uint64_t x) {
+  uint32_t lsb;
+  _BitScanForward64(&lsb, x);
+  return lsb;
+}
+#define BROTLI_TZCNT64 BrotliBsf64Msvc
+#endif /* BROTLI_TARGET_X64 */
+#endif /* __builtin_ctzll */
+#endif /* BROTLI_64_BITS */
+
+#if BROTLI_GNUC_HAS_BUILTIN(__builtin_clz, 3, 4, 0) || \
+    BROTLI_INTEL_VERSION_CHECK(16, 0, 0)
+#define BROTLI_BSR32(x) (31u ^ (uint32_t)__builtin_clz(x))
+#elif BROTLI_MSVC_VERSION_CHECK(12, 0, 0)
+static BROTLI_INLINE uint32_t BrotliBsr32Msvc(uint32_t x) {
+  uint32_t msb;
+  _BitScanReverse(&msb, x);
+  return msb;
+}
+#define BROTLI_BSR32 BrotliBsr32Msvc
+#endif /* __builtin_clz */
 
 /* Default brotli_alloc_func */
 static void* BrotliDefaultAllocFunc(void* opaque, size_t size) {
